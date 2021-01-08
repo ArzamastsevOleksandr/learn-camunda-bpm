@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0fr9mxs" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.2.0">
+  <bpmn:process id="s003-timer-process-termination" isExecutable="true">
+    <bpmn:startEvent id="START_PROCESS" name="start process">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="#{logDelegate}" event="start" />
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0v8yziq</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="Gateway_012qotk" default="FLAG_IS_FALSE_FLOW">
+      <bpmn:incoming>Flow_1pcuhy6</bpmn:incoming>
+      <bpmn:outgoing>FLAG_IS_TRUE_FLOW</bpmn:outgoing>
+      <bpmn:outgoing>FLAG_IS_FALSE_FLOW</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="FLAG_IS_TRUE_FLOW" name="flag = true" sourceRef="Gateway_012qotk" targetRef="FLAG_IS_TRUE_LOGGER">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${flag}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="FLAG_IS_TRUE_LOGGER" name="Logger1" camunda:delegateExpression="#{logDelegate}">
+      <bpmn:incoming>FLAG_IS_TRUE_FLOW</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ipgfak</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="FLAG_IS_FALSE_FLOW" name="flag = false" sourceRef="Gateway_012qotk" targetRef="FLAG_IS_FALSE_LOGGER2" />
+    <bpmn:serviceTask id="FLAG_IS_FALSE_LOGGER2" name="Logger2" camunda:delegateExpression="#{logDelegate}">
+      <bpmn:incoming>FLAG_IS_FALSE_FLOW</bpmn:incoming>
+      <bpmn:outgoing>Flow_0t3qu7x</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1ipgfak" sourceRef="FLAG_IS_TRUE_LOGGER" targetRef="TIMER_LOGGER1" />
+    <bpmn:intermediateCatchEvent id="TIMER_LOGGER1" name="30s">
+      <bpmn:incoming>Flow_1ipgfak</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qpp2e5</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_00edmpw">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT30S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_0t3qu7x" sourceRef="FLAG_IS_FALSE_LOGGER2" targetRef="TIMER_LOGGER2" />
+    <bpmn:intermediateCatchEvent id="TIMER_LOGGER2" name="30s">
+      <bpmn:incoming>Flow_0t3qu7x</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vj58rl</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0dv1uqd">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT30S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_0v8yziq" sourceRef="START_PROCESS" targetRef="Timer_Start" />
+    <bpmn:intermediateCatchEvent id="Timer_Start" name="5s">
+      <bpmn:incoming>Flow_0v8yziq</bpmn:incoming>
+      <bpmn:outgoing>Flow_1pcuhy6</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_00y27pz">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_1pcuhy6" sourceRef="Timer_Start" targetRef="Gateway_012qotk" />
+    <bpmn:endEvent id="END_PROCESS" name="end process">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="#{logDelegate}" event="start" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0qpp2e5</bpmn:incoming>
+      <bpmn:incoming>Flow_1vj58rl</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0qpp2e5" sourceRef="TIMER_LOGGER1" targetRef="END_PROCESS" />
+    <bpmn:sequenceFlow id="Flow_1vj58rl" sourceRef="TIMER_LOGGER2" targetRef="END_PROCESS" />
+    <bpmn:subProcess id="Activity_1ea0fn2" triggeredByEvent="true">
+      <bpmn:startEvent id="START_SUBPROCESS" name="start subprocess with autoEndTime">
+        <bpmn:extensionElements>
+          <camunda:executionListener delegateExpression="#{logDelegate}" event="start" />
+        </bpmn:extensionElements>
+        <bpmn:outgoing>Flow_0tk9b10</bpmn:outgoing>
+        <bpmn:timerEventDefinition id="TimerEventDefinition_1e1df0c">
+          <bpmn:timeDate xsi:type="bpmn:tFormalExpression">${autoEndTime}</bpmn:timeDate>
+        </bpmn:timerEventDefinition>
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="Flow_0tk9b10" sourceRef="START_SUBPROCESS" targetRef="SUBPROCESS_LOGGER" />
+      <bpmn:endEvent id="END_SUBPROCESS" name="end subprocess">
+        <bpmn:extensionElements>
+          <camunda:executionListener delegateExpression="#{logDelegate}" event="start" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_19wy5zh</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_19wy5zh" sourceRef="SUBPROCESS_LOGGER" targetRef="END_SUBPROCESS" />
+      <bpmn:serviceTask id="SUBPROCESS_LOGGER" name="Subprocess Logger" camunda:delegateExpression="#{subprocessLogger}">
+        <bpmn:incoming>Flow_0tk9b10</bpmn:incoming>
+        <bpmn:outgoing>Flow_19wy5zh</bpmn:outgoing>
+      </bpmn:serviceTask>
+    </bpmn:subProcess>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="s003-timer-process-termination">
+      <bpmndi:BPMNEdge id="Flow_1vj58rl_di" bpmnElement="Flow_1vj58rl">
+        <di:waypoint x="768" y="210" />
+        <di:waypoint x="930" y="210" />
+        <di:waypoint x="930" y="178" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qpp2e5_di" bpmnElement="Flow_0qpp2e5">
+        <di:waypoint x="768" y="100" />
+        <di:waypoint x="930" y="100" />
+        <di:waypoint x="930" y="142" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pcuhy6_di" bpmnElement="Flow_1pcuhy6">
+        <di:waypoint x="308" y="100" />
+        <di:waypoint x="405" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0v8yziq_di" bpmnElement="Flow_0v8yziq">
+        <di:waypoint x="188" y="100" />
+        <di:waypoint x="272" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0t3qu7x_di" bpmnElement="Flow_0t3qu7x">
+        <di:waypoint x="660" y="210" />
+        <di:waypoint x="732" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ipgfak_di" bpmnElement="Flow_1ipgfak">
+        <di:waypoint x="660" y="100" />
+        <di:waypoint x="732" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14u81j1_di" bpmnElement="FLAG_IS_FALSE_FLOW">
+        <di:waypoint x="430" y="125" />
+        <di:waypoint x="430" y="210" />
+        <di:waypoint x="560" y="210" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="443" y="183" width="54" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08jtc4z_di" bpmnElement="FLAG_IS_TRUE_FLOW">
+        <di:waypoint x="455" y="100" />
+        <di:waypoint x="560" y="100" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="484" y="82" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="START_PROCESS">
+        <dc:Bounds x="152" y="82" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="139" y="125" width="64" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_012qotk_di" bpmnElement="Gateway_012qotk" isMarkerVisible="true">
+        <dc:Bounds x="405" y="75" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ou34sv_di" bpmnElement="FLAG_IS_TRUE_LOGGER">
+        <dc:Bounds x="560" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0mch30k_di" bpmnElement="FLAG_IS_FALSE_LOGGER2">
+        <dc:Bounds x="560" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_12477v2_di" bpmnElement="TIMER_LOGGER1">
+        <dc:Bounds x="732" y="82" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="741" y="125" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_19np4tr_di" bpmnElement="TIMER_LOGGER2">
+        <dc:Bounds x="732" y="192" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="741" y="235" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1s8252e_di" bpmnElement="Timer_Start">
+        <dc:Bounds x="272" y="82" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="284" y="125" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0lwen3x_di" bpmnElement="END_PROCESS">
+        <dc:Bounds x="912" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="960" y="153" width="61" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0h8lqzj_di" bpmnElement="Activity_1ea0fn2" isExpanded="true">
+        <dc:Bounds x="255" y="290" width="405" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_19wy5zh_di" bpmnElement="Flow_19wy5zh">
+        <di:waypoint x="490" y="390" />
+        <di:waypoint x="552" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tk9b10_di" bpmnElement="Flow_0tk9b10">
+        <di:waypoint x="331" y="390" />
+        <di:waypoint x="390" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_032vqqh_di" bpmnElement="START_SUBPROCESS">
+        <dc:Bounds x="295" y="372" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="272" y="415" width="87" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0170fjz_di" bpmnElement="END_SUBPROCESS">
+        <dc:Bounds x="552" y="372" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="533" y="415" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1uze44a_di" bpmnElement="SUBPROCESS_LOGGER">
+        <dc:Bounds x="390" y="350" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
