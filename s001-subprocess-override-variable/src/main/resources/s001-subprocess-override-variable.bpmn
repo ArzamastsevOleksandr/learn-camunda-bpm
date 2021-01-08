@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0fr9mxs" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.2.0">
-  <bpmn:process id="subprocess-process" isExecutable="true">
+  <bpmn:process id="s001-subprocess-override-variable" isExecutable="true">
     <bpmn:endEvent id="END_PROCESS" name="end process">
-      <bpmn:extensionElements>
-        <camunda:executionListener delegateExpression="#{logDelegate}" event="start" />
-      </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_16gzt2m</bpmn:incoming>
       <bpmn:incoming>Flow_1q27xkn</bpmn:incoming>
     </bpmn:endEvent>
@@ -41,18 +38,12 @@
         <bpmn:outgoing>Flow_14xcokh</bpmn:outgoing>
       </bpmn:serviceTask>
       <bpmn:startEvent id="START_SUBPROCESS" name="set flag = true" isInterrupting="false">
-        <bpmn:extensionElements>
-          <camunda:executionListener delegateExpression="#{logDelegate}" event="start" />
-        </bpmn:extensionElements>
         <bpmn:outgoing>Flow_0imih25</bpmn:outgoing>
         <bpmn:messageEventDefinition id="MessageEventDefinition_0oqh74e" messageRef="Message_05f3dk8" />
       </bpmn:startEvent>
       <bpmn:sequenceFlow id="Flow_0imih25" sourceRef="START_SUBPROCESS" targetRef="SUBPROCESS_LOG_DELEGATE" />
       <bpmn:sequenceFlow id="Flow_14xcokh" sourceRef="SUBPROCESS_LOG_DELEGATE" targetRef="END_SUBPROCESS" />
       <bpmn:endEvent id="END_SUBPROCESS" name="end subprocess">
-        <bpmn:extensionElements>
-          <camunda:executionListener delegateExpression="#{logDelegate}" event="start" />
-        </bpmn:extensionElements>
         <bpmn:incoming>Flow_14xcokh</bpmn:incoming>
       </bpmn:endEvent>
     </bpmn:subProcess>
@@ -62,9 +53,6 @@
       <bpmn:outgoing>Flow_0z6kpaw</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:startEvent id="START_PROCESS" name="start process in 1 sec">
-      <bpmn:extensionElements>
-        <camunda:executionListener delegateExpression="#{logDelegate}" event="start" />
-      </bpmn:extensionElements>
       <bpmn:outgoing>Flow_0cwrgd7</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_03a4sg0">
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1S</bpmn:timeDuration>
@@ -74,7 +62,7 @@
   </bpmn:process>
   <bpmn:message id="Message_05f3dk8" name="Message_SetFlag" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="subprocess-process">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="s001-subprocess-override-variable">
       <bpmndi:BPMNEdge id="Flow_0cwrgd7_di" bpmnElement="Flow_0cwrgd7">
         <di:waypoint x="188" y="117" />
         <di:waypoint x="240" y="117" />
