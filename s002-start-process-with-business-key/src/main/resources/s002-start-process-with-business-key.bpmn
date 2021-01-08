@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0fr9mxs" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.2.0">
+  <bpmn:process id="s002-start-process-with-business-key" isExecutable="true">
+    <bpmn:startEvent id="START_PROCESS" name="start process">
+      <bpmn:outgoing>Flow_16hpwpi</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_16hpwpi" sourceRef="START_PROCESS" targetRef="START_LOGGER" />
+    <bpmn:endEvent id="Event_065vbnf" name="end process">
+      <bpmn:incoming>Flow_0unpwy2</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="START_LOGGER" name="Start LogDelegate" camunda:delegateExpression="#{logDelegate}">
+      <bpmn:incoming>Flow_16hpwpi</bpmn:incoming>
+      <bpmn:outgoing>Flow_113egqz</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_113egqz" sourceRef="START_LOGGER" targetRef="TIMER_15_SEC" />
+    <bpmn:intermediateCatchEvent id="TIMER_15_SEC" name="timer 15 sec">
+      <bpmn:incoming>Flow_113egqz</bpmn:incoming>
+      <bpmn:outgoing>Flow_1v7u6dr</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0y6diyj">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT15S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_1v7u6dr" sourceRef="TIMER_15_SEC" targetRef="END_LOGGER" />
+    <bpmn:sequenceFlow id="Flow_0unpwy2" sourceRef="END_LOGGER" targetRef="Event_065vbnf" />
+    <bpmn:serviceTask id="END_LOGGER" name="End LogDelegate" camunda:delegateExpression="#{logDelegate}">
+      <bpmn:incoming>Flow_1v7u6dr</bpmn:incoming>
+      <bpmn:outgoing>Flow_0unpwy2</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="s002-start-process-with-business-key">
+      <bpmndi:BPMNEdge id="Flow_16hpwpi_di" bpmnElement="Flow_16hpwpi">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="260" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_113egqz_di" bpmnElement="Flow_113egqz">
+        <di:waypoint x="360" y="117" />
+        <di:waypoint x="442" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1v7u6dr_di" bpmnElement="Flow_1v7u6dr">
+        <di:waypoint x="478" y="117" />
+        <di:waypoint x="560" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0unpwy2_di" bpmnElement="Flow_0unpwy2">
+        <di:waypoint x="660" y="117" />
+        <di:waypoint x="732" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="START_PROCESS">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="165" y="142" width="64" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0k9hkk1_di" bpmnElement="START_LOGGER">
+        <dc:Bounds x="260" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1xnh73p_di" bpmnElement="TIMER_15_SEC">
+        <dc:Bounds x="442" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="430" y="142" width="61" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_065vbnf_di" bpmnElement="Event_065vbnf">
+        <dc:Bounds x="732" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="720" y="142" width="61" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1j6xviu_di" bpmnElement="END_LOGGER">
+        <dc:Bounds x="560" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
