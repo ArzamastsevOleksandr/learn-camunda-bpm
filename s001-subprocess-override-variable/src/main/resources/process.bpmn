@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0fr9mxs" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.2.0">
+  <bpmn:process id="subprocess-process" isExecutable="true">
+    <bpmn:endEvent id="END_PROCESS" name="end process">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="#{logDelegate}" event="start" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_16gzt2m</bpmn:incoming>
+      <bpmn:incoming>Flow_1q27xkn</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_16gzt2m" sourceRef="FLAG_IS_FALSE" targetRef="END_PROCESS" />
+    <bpmn:serviceTask id="FLAG_IS_FALSE" name="flag is false" camunda:delegateExpression="#{logDelegate}">
+      <bpmn:incoming>Flow_1bhqazn</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_16gzt2m</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_0629xb5" default="Flow_1bhqazn">
+      <bpmn:incoming>Flow_18o6y9j</bpmn:incoming>
+      <bpmn:outgoing>is_flag_true</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1bhqazn</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="is_flag_true" name="flag == true" sourceRef="Gateway_0629xb5" targetRef="FLAG_IS_TRUE">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${flag}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1q27xkn" sourceRef="FLAG_IS_TRUE" targetRef="END_PROCESS" />
+    <bpmn:intermediateCatchEvent id="timer_4sec" name="4 sec">
+      <bpmn:incoming>Flow_0z6kpaw</bpmn:incoming>
+      <bpmn:outgoing>Flow_18o6y9j</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1gf1i1q">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT4S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_18o6y9j" sourceRef="timer_4sec" targetRef="Gateway_0629xb5" />
+    <bpmn:serviceTask id="FLAG_IS_TRUE" name="flag is true" camunda:delegateExpression="#{logDelegate}">
+      <bpmn:incoming>is_flag_true</bpmn:incoming>
+      <bpmn:outgoing>Flow_1q27xkn</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1bhqazn" sourceRef="Gateway_0629xb5" targetRef="FLAG_IS_FALSE" />
+    <bpmn:subProcess id="set_flag_subprocess" name="set flag subprocess" triggeredByEvent="true">
+      <bpmn:serviceTask id="SUBPROCESS_LOG_DELEGATE" name="LogDelegate" camunda:delegateExpression="#{logDelegate}">
+        <bpmn:incoming>Flow_0imih25</bpmn:incoming>
+        <bpmn:outgoing>Flow_14xcokh</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:startEvent id="START_SUBPROCESS" name="set flag = true" isInterrupting="false">
+        <bpmn:extensionElements>
+          <camunda:executionListener delegateExpression="#{logDelegate}" event="start" />
+        </bpmn:extensionElements>
+        <bpmn:outgoing>Flow_0imih25</bpmn:outgoing>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_0oqh74e" messageRef="Message_05f3dk8" />
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="Flow_0imih25" sourceRef="START_SUBPROCESS" targetRef="SUBPROCESS_LOG_DELEGATE" />
+      <bpmn:sequenceFlow id="Flow_14xcokh" sourceRef="SUBPROCESS_LOG_DELEGATE" targetRef="END_SUBPROCESS" />
+      <bpmn:endEvent id="END_SUBPROCESS" name="end subprocess">
+        <bpmn:extensionElements>
+          <camunda:executionListener delegateExpression="#{logDelegate}" event="start" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_14xcokh</bpmn:incoming>
+      </bpmn:endEvent>
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_0z6kpaw" sourceRef="StartFlagSetter" targetRef="timer_4sec" />
+    <bpmn:serviceTask id="StartFlagSetter" name="StartFlagSetter" camunda:delegateExpression="#{startFlagSetter}">
+      <bpmn:incoming>Flow_0cwrgd7</bpmn:incoming>
+      <bpmn:outgoing>Flow_0z6kpaw</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:startEvent id="START_PROCESS" name="start process in 1 sec">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="#{logDelegate}" event="start" />
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0cwrgd7</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_03a4sg0">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0cwrgd7" sourceRef="START_PROCESS" targetRef="StartFlagSetter" />
+  </bpmn:process>
+  <bpmn:message id="Message_05f3dk8" name="Message_SetFlag" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="subprocess-process">
+      <bpmndi:BPMNEdge id="Flow_0cwrgd7_di" bpmnElement="Flow_0cwrgd7">
+        <di:waypoint x="188" y="117" />
+        <di:waypoint x="240" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0z6kpaw_di" bpmnElement="Flow_0z6kpaw">
+        <di:waypoint x="340" y="117" />
+        <di:waypoint x="437" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bhqazn_di" bpmnElement="Flow_1bhqazn">
+        <di:waypoint x="595" y="117" />
+        <di:waypoint x="730" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18o6y9j_di" bpmnElement="Flow_18o6y9j">
+        <di:waypoint x="473" y="117" />
+        <di:waypoint x="545" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1q27xkn_di" bpmnElement="Flow_1q27xkn">
+        <di:waypoint x="830" y="230" />
+        <di:waypoint x="910" y="230" />
+        <di:waypoint x="910" y="135" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jchdef_di" bpmnElement="is_flag_true">
+        <di:waypoint x="570" y="142" />
+        <di:waypoint x="570" y="230" />
+        <di:waypoint x="730" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="602" y="203" width="56" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_16gzt2m_di" bpmnElement="SequenceFlow_16gzt2m">
+        <di:waypoint x="830" y="117" />
+        <di:waypoint x="892" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0x6ir2l_di" bpmnElement="END_PROCESS">
+        <dc:Bounds x="892" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="880" y="69" width="61" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0xcr5sl_di" bpmnElement="FLAG_IS_FALSE">
+        <dc:Bounds x="730" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0629xb5_di" bpmnElement="Gateway_0629xb5" isMarkerVisible="true">
+        <dc:Bounds x="545" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1cy776g_di" bpmnElement="timer_4sec">
+        <dc:Bounds x="437" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="442" y="142" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0l6rbzm_di" bpmnElement="FLAG_IS_TRUE">
+        <dc:Bounds x="730" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ufjhmt_di" bpmnElement="set_flag_subprocess" isExpanded="true">
+        <dc:Bounds x="280" y="320" width="350" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_14xcokh_di" bpmnElement="Flow_14xcokh">
+        <di:waypoint x="510" y="420" />
+        <di:waypoint x="542" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0imih25_di" bpmnElement="Flow_0imih25">
+        <di:waypoint x="356" y="420" />
+        <di:waypoint x="410" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_15dwtmy_di" bpmnElement="SUBPROCESS_LOG_DELEGATE">
+        <dc:Bounds x="410" y="380" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_06pvni3_di" bpmnElement="START_SUBPROCESS">
+        <dc:Bounds x="320" y="402" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="306" y="445" width="67" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1kz1gp5_di" bpmnElement="END_SUBPROCESS">
+        <dc:Bounds x="542" y="402" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="521" y="445" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0oza19v_di" bpmnElement="StartFlagSetter">
+        <dc:Bounds x="240" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1t283iy_di" bpmnElement="START_PROCESS">
+        <dc:Bounds x="152" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="129" y="142" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
